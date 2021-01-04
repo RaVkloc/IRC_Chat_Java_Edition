@@ -55,4 +55,16 @@ public abstract class ActionBase {
         return retVal;
     }
 
+    protected PreparedStatement getStatementForQuery(String query, String[] args) throws SQLException
+    {
+        PreparedStatement statement = getDatabaseConnection().getStatement(query);
+
+        for (int i = 0; i < args.length; i++) {
+            // statement starts indexing parameters from 1
+            statement.setString(i + 1, args[i]);
+        }
+
+        return statement;
+    }
+
 }

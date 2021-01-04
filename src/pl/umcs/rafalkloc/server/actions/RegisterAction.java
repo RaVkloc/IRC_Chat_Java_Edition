@@ -1,7 +1,6 @@
 package pl.umcs.rafalkloc.server.actions;
 
 import pl.umcs.rafalkloc.common.ClientMessage;
-import pl.umcs.rafalkloc.server.core.DatabaseConnection;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -26,14 +25,11 @@ public class RegisterAction extends ActionBase {
             return false;
         }
 
-        DatabaseConnection db_conn = getDatabaseConnection();
-
         // Check if such a username exists in DB.
         try {
-            PreparedStatement statement = db_conn.getStatement("SELECT COUNT(*) FROM IRC_USERS WHERE username=?");
-            statement.setString(1, msg.getBodyElem("Username"));
+            PreparedStatement statement = getStatementForQuery("SELECT COUNT(*) FROM IRC_USERS WHERE username=?",
+                                                               new String[]{msg.getBodyElem("Username")});
             ResultSet result = statement.executeQuery();
-
             if (result.getInt(1) != 0) {
                 setError("Such username is already taken. Try another one.");
                 statement.close();
@@ -47,10 +43,11 @@ public class RegisterAction extends ActionBase {
 
         //Add new user to DB.
         try {
-            PreparedStatement statement = db_conn.getStatement("INSERT INTO IRC_USERS(username, password) VALUES (?,?)");
-            statement.setString(1, msg.getBodyElem("Username"));
-            statement.setString(2, createHashForPassword(msg.getBodyElem("Password")));
-
+            PreparedStatement statement =
+                    getStatementForQuery("INSERT INTO IRC_USERS(username, password) VALUES (?,?)",
+                                         new String[]{msg.getBodyElem("Username"),
+                                                      createHashForPassword(msg.getBodyElem("Password"))
+                                         });
             statement.executeUpdate();
             statement.close();
         } catch (SQLException throwables) {

@@ -24,13 +24,11 @@ public class LogoutAction extends ActionBase {
                 return false;
             }
 
-            PreparedStatement statement = getDatabaseConnection().getStatement(query);
-            statement.setString(1, msg.getBodyElem("Username"));
-
+            PreparedStatement statement = getStatementForQuery(query, new String[]{msg.getBodyElem("Username")});
             statement.executeUpdate();
             statement.close();
         } catch (SQLException ignored) {
-            setError("Some errors occurred.");
+            setError("Some errors occurred during logging out.");
             return false;
         }
 
