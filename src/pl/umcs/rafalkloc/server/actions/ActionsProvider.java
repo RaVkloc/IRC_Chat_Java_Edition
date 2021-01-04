@@ -39,5 +39,9 @@ public class ActionsProvider {
             LogoutAction action = new LogoutAction();
             mActionsMapper.put(action.getActionNumber(), action);
         }
+        {
+            CreateRoomAction action = new CreateRoomAction();
+            mActionsMapper.put(action.getActionNumber(), action);
+        }
     }
 }
