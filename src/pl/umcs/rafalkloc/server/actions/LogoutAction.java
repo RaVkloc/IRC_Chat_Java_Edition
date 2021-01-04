@@ -17,7 +17,7 @@ public class LogoutAction extends ActionBase {
     public boolean execute(ClientMessage msg)
     {
 
-        String query = "UPDATE IRC_USERS SET token = NULL WHERE username = ?";
+        String query = "UPDATE IRC_USERS SET token = NULL, curr_room_name = NULL WHERE username = ?";
         try {
             if (!validateToken(msg)) {
                 setError("Invalid token.");
