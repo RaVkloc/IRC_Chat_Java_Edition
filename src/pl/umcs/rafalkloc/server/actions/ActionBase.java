@@ -1,0 +1,58 @@
+package pl.umcs.rafalkloc.server.actions;
+
+import pl.umcs.rafalkloc.common.ClientMessage;
+import pl.umcs.rafalkloc.common.ServerMessage;
+import pl.umcs.rafalkloc.server.core.DatabaseConnection;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public abstract class ActionBase {
+    private DatabaseConnection mDatabaseConnection;
+    private ServerMessage mResponse;
+
+    public ActionBase()
+    {
+        mDatabaseConnection = new DatabaseConnection();
+        mResponse = new ServerMessage();
+        mResponse.setActionNumber(getActionNumber());
+    }
+
+    public abstract int getActionNumber();
+
+    public abstract boolean execute(ClientMessage msg);
+
+    public ServerMessage getResponse()
+    {
+        return mResponse;
+    }
+
+    protected void setError(String error)
+    {
+        mResponse.addBodyElem("Error", error);
+    }
+
+    protected DatabaseConnection getDatabaseConnection()
+    {
+        return mDatabaseConnection;
+    }
+
+    protected void addResponseBodyElem(String type, String value)
+    {
+        mResponse.addBodyElem(type, value);
+    }
+
+    protected boolean validateToken(ClientMessage message) throws SQLException
+    {
+        String query = "SELECT token FROM IRC_USERS WHERE username = ?";
+        PreparedStatement statement = mDatabaseConnection.getStatement(query);
+        statement.setString(1, message.getBodyElem("Username"));
+        ResultSet result = statement.executeQuery();
+
+        boolean retVal = result.getString(1).equals(message.getBodyElem("Token"));
+        statement.close();
+        return retVal;
+    }
+
+}
