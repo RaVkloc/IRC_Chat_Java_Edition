@@ -43,5 +43,9 @@ public class ActionsProvider {
             CreateRoomAction action = new CreateRoomAction();
             mActionsMapper.put(action.getActionNumber(), action);
         }
+        {
+            JoinRoomAction action = new JoinRoomAction();
+            mActionsMapper.put(action.getActionNumber(), action);
+        }
     }
 }
