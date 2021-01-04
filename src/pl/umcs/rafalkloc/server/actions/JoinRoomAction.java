@@ -1,7 +1,6 @@
 package pl.umcs.rafalkloc.server.actions;
 
 import pl.umcs.rafalkloc.common.ClientMessage;
-import pl.umcs.rafalkloc.server.core.DatabaseConnection;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,13 +23,10 @@ public class JoinRoomAction extends ActionBase {
                 return false;
             }
 
-            DatabaseConnection db_conn = getDatabaseConnection();
-
             {
                 //Check if room exists
                 String query = "SELECT COUNT(*) FROM IRC_ROOMS WHERE name=?";
-                PreparedStatement statement = db_conn.getStatement(query);
-                statement.setString(1, msg.getBodyElem("Room"));
+                PreparedStatement statement = getStatementForQuery(query, new String[]{msg.getBodyElem("Room")});
                 ResultSet result = statement.executeQuery();
                 if (result.getInt(1) == 0) {
                     setError("Required room does not exists.");
@@ -43,10 +39,8 @@ public class JoinRoomAction extends ActionBase {
             {
                 // Set current room to user
                 String query = "UPDATE IRC_USERS SET curr_room_name=? WHERE token=?";
-                PreparedStatement statement = db_conn.getStatement(query);
-                statement.setString(1, msg.getBodyElem("Room"));
-                statement.setString(2, msg.getBodyElem("Token"));
-
+                PreparedStatement statement = getStatementForQuery(query, new String[]{msg.getBodyElem("Room"),
+                                                                                       msg.getBodyElem("Token")});
                 statement.executeUpdate();
                 statement.close();
             }

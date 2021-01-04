@@ -27,8 +27,7 @@ public class CreateRoomAction extends ActionBase {
             {
                 //Check if room exists
                 String query = "SELECT COUNT(*) FROM IRC_ROOMS WHERE name=?;";
-                PreparedStatement statement = getDatabaseConnection().getStatement(query);
-                statement.setString(1, msg.getBodyElem("Room"));
+                PreparedStatement statement = getStatementForQuery(query, new String[]{msg.getBodyElem("Room")});
                 ResultSet result = statement.executeQuery();
                 if (result.getInt(1) == 1) {
                     setError("Provided room's name already exists. Try another one.");
@@ -41,9 +40,7 @@ public class CreateRoomAction extends ActionBase {
             {
                 // Create new room
                 String query = "INSERT INTO IRC_ROOMS (name) VALUES (?);";
-                PreparedStatement statement = getDatabaseConnection().getStatement(query);
-                statement.setString(1, msg.getBodyElem("Room"));
-
+                PreparedStatement statement = getStatementForQuery(query, new String[]{msg.getBodyElem("Room")});
                 statement.executeUpdate();
                 statement.close();
             }
