@@ -3,8 +3,11 @@ package pl.umcs.rafalkloc.server.core;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CoreServer {
     private static CoreServer mInstance;
@@ -20,7 +23,7 @@ public class CoreServer {
             System.out.println(exception.getMessage());
         }
 
-        mConnectedClients = new LinkedList<>();
+        mConnectedClients = Collections.synchronizedList(new LinkedList<>());
     }
 
     public static CoreServer instance()
@@ -33,13 +36,13 @@ public class CoreServer {
 
     public void runServer()
     {
+        ExecutorService executorService = Executors.newCachedThreadPool();
         while (true) {
             try {
                 Socket newClientSocket = mServerSocket.accept();
                 ConnectedClientHandler connectedClientHandler = new ConnectedClientHandler(newClientSocket);
                 mConnectedClients.add(connectedClientHandler);
-                Thread thread = new Thread(connectedClientHandler);
-                thread.start();
+                executorService.execute(connectedClientHandler);
             } catch (IOException ignored) {
             }
         }
