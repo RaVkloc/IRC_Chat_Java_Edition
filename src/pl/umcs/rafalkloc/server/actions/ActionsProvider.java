@@ -41,19 +41,23 @@ public class ActionsProvider {
         }
         {
             CreateRoomAction action = new CreateRoomAction();
-            mActionsMapper.put(action.getActionNumber(), action);   // 4
+            mActionsMapper.put(action.getActionNumber(), action);   // 6
         }
         {
             JoinRoomAction action = new JoinRoomAction();
-            mActionsMapper.put(action.getActionNumber(), action);   // 5
+            mActionsMapper.put(action.getActionNumber(), action);   // 4
         }
         {
             LeaveRoomAction action = new LeaveRoomAction();
-            mActionsMapper.put(action.getActionNumber(), action);   // 6
+            mActionsMapper.put(action.getActionNumber(), action);   // 5
         }
         {
             ListRoomAction action = new ListRoomAction();
             mActionsMapper.put(action.getActionNumber(), action);   // 7
+        }
+        {
+            ListUsersInRoomAction action = new ListUsersInRoomAction();
+            mActionsMapper.put(action.getActionNumber(), action);   // 8
         }
     }
 }
