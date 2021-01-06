@@ -2,6 +2,7 @@ package pl.umcs.rafalkloc.server.core;
 
 import pl.umcs.rafalkloc.common.ClientMessage;
 import pl.umcs.rafalkloc.common.ServerMessage;
+import pl.umcs.rafalkloc.server.actions.ServerLogoutAction;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -58,10 +59,16 @@ public class CoreServer {
         serverMessage.addBodyElem("Message", message.getBodyElem("Message"));
 
         for (ConnectedClientHandler client : mConnectedClients) {
-            if(receivers.contains(client.getUsername())) {
+            if (receivers.contains(client.getUsername())) {
                 client.send(serverMessage);
             }
         }
+    }
+
+    public void disconnect(ConnectedClientHandler client)
+    {
+        ServerLogoutAction.logout(client.getUsername());
+        mConnectedClients.remove(client);
     }
 
     public static void main(String[] args)

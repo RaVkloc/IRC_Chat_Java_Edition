@@ -13,7 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class ConnectedClientHandler implements Runnable {
-    private final Socket mClientSocket;
     private InputStream mInputStream;
     private OutputStream mOutputStream;
     private PrintWriter mPrintWriter;
@@ -22,7 +21,6 @@ public class ConnectedClientHandler implements Runnable {
     public ConnectedClientHandler(Socket clientSocket)
     {
         mUsername = "";
-        mClientSocket = clientSocket;
         try {
             mInputStream = clientSocket.getInputStream();
             mOutputStream = clientSocket.getOutputStream();
@@ -48,10 +46,11 @@ public class ConnectedClientHandler implements Runnable {
             if (action.execute(clientMessage) && clientMessage.getActionNumber() == 2) {
                 mUsername = clientMessage.getBodyElem("Username");
             }
-//            String responseString = ServerMessageCH.serializeToString(action.getResponse());
-//            mPrintWriter.println(responseString);
+
             send(action.getResponse());
         }
+
+        CoreServer.instance().disconnect(this);
     }
 
     public String getUsername()
