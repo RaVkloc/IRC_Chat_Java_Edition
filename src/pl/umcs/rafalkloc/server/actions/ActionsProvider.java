@@ -29,27 +29,31 @@ public class ActionsProvider {
     {
         {
             RegisterAction action = new RegisterAction();
-            mActionsMapper.put(action.getActionNumber(), action);
+            mActionsMapper.put(action.getActionNumber(), action);   // 1
         }
         {
             LoginAction action = new LoginAction();
-            mActionsMapper.put(action.getActionNumber(), action);
+            mActionsMapper.put(action.getActionNumber(), action);   // 2
         }
         {
             LogoutAction action = new LogoutAction();
-            mActionsMapper.put(action.getActionNumber(), action);
+            mActionsMapper.put(action.getActionNumber(), action);   // 3
         }
         {
             CreateRoomAction action = new CreateRoomAction();
-            mActionsMapper.put(action.getActionNumber(), action);
+            mActionsMapper.put(action.getActionNumber(), action);   // 4
         }
         {
             JoinRoomAction action = new JoinRoomAction();
-            mActionsMapper.put(action.getActionNumber(), action);
+            mActionsMapper.put(action.getActionNumber(), action);   // 5
         }
         {
             LeaveRoomAction action = new LeaveRoomAction();
-            mActionsMapper.put(action.getActionNumber(), action);
+            mActionsMapper.put(action.getActionNumber(), action);   // 6
+        }
+        {
+            ListRoomAction action = new ListRoomAction();
+            mActionsMapper.put(action.getActionNumber(), action);   // 7
         }
     }
 }
