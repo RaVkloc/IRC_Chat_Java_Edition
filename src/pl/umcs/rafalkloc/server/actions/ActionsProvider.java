@@ -59,5 +59,9 @@ public class ActionsProvider {
             ListUsersInRoomAction action = new ListUsersInRoomAction();
             mActionsMapper.put(action.getActionNumber(), action);   // 8
         }
+        {
+            SendMessageAction action = new SendMessageAction();
+            mActionsMapper.put(action.getActionNumber(), action);   // 9
+        }
     }
 }

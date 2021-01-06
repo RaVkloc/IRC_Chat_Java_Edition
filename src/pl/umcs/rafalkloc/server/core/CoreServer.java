@@ -1,5 +1,8 @@
 package pl.umcs.rafalkloc.server.core;
 
+import pl.umcs.rafalkloc.common.ClientMessage;
+import pl.umcs.rafalkloc.common.ServerMessage;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -44,6 +47,19 @@ public class CoreServer {
                 mConnectedClients.add(connectedClientHandler);
                 executorService.execute(connectedClientHandler);
             } catch (IOException ignored) {
+            }
+        }
+    }
+
+    public void sendToAllFromList(ClientMessage message, String receivers)
+    {
+        ServerMessage serverMessage = new ServerMessage();
+        serverMessage.setActionNumber(message.getActionNumber());
+        serverMessage.addBodyElem("Message", message.getBodyElem("Message"));
+
+        for (ConnectedClientHandler client : mConnectedClients) {
+            if(receivers.contains(client.getUsername())) {
+                client.send(serverMessage);
             }
         }
     }
