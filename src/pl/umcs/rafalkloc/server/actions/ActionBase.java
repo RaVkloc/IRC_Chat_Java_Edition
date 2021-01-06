@@ -50,7 +50,7 @@ public abstract class ActionBase {
         statement.setString(1, message.getBodyElem("Username"));
         ResultSet result = statement.executeQuery();
 
-        boolean retVal = result.getString(1).equals(message.getBodyElem("Token"));
+        boolean retVal = result.getString(1).equals(message.getToken());
         statement.close();
         return retVal;
     }

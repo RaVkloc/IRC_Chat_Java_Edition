@@ -40,7 +40,7 @@ public class JoinRoomAction extends ActionBase {
                 // Set current room to user
                 String query = "UPDATE IRC_USERS SET curr_room_name=? WHERE token=?";
                 PreparedStatement statement = getStatementForQuery(query, new String[]{msg.getBodyElem("Room"),
-                                                                                       msg.getBodyElem("Token")});
+                                                                                       msg.getToken()});
                 statement.executeUpdate();
                 statement.close();
             }
