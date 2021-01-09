@@ -15,13 +15,19 @@ public abstract class ActionBase {
     public ActionBase()
     {
         mDatabaseConnection = new DatabaseConnection();
-        mResponse = new ServerMessage();
-        mResponse.setActionNumber(getActionNumber());
     }
 
     public abstract int getActionNumber();
 
-    public abstract boolean execute(ClientMessage msg);
+    public boolean execute(ClientMessage msg)
+    {
+        mResponse = new ServerMessage();
+        mResponse.setActionNumber(getActionNumber());
+
+        return executePriv(msg);
+    }
+
+    protected abstract boolean executePriv(ClientMessage msg);
 
     public ServerMessage getResponse()
     {

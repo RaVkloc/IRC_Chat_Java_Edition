@@ -18,7 +18,7 @@ public class RegisterAction extends ActionBase {
     }
 
     @Override
-    public boolean execute(ClientMessage msg)
+    protected boolean executePriv(ClientMessage msg)
     {
         if (!checkMessageCorrectness(msg)) {
             setError("Empty username or password.");

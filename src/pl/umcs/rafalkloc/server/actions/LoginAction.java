@@ -19,7 +19,7 @@ public class LoginAction extends ActionBase {
     }
 
     @Override
-    public boolean execute(ClientMessage msg)
+    protected boolean executePriv(ClientMessage msg)
     {
         String query = "SELECT COUNT(*) FROM IRC_USERS WHERE username=? AND password=?";
         try {

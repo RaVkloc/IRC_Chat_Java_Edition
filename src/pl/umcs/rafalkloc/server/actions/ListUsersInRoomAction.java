@@ -15,7 +15,7 @@ public class ListUsersInRoomAction extends ActionBase {
     }
 
     @Override
-    public boolean execute(ClientMessage msg)
+    protected boolean executePriv(ClientMessage msg)
     {
         try {
             if (!validateToken(msg)) {

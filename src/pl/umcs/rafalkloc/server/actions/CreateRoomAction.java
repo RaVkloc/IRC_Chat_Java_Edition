@@ -15,7 +15,7 @@ public class CreateRoomAction extends ActionBase {
     }
 
     @Override
-    public boolean execute(ClientMessage msg)
+    protected boolean executePriv(ClientMessage msg)
     {
         try {
             // Check if logged in

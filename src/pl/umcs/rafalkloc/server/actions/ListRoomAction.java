@@ -15,7 +15,7 @@ public class ListRoomAction extends ActionBase {
     }
 
     @Override
-    public boolean execute(ClientMessage msg)
+    protected boolean executePriv(ClientMessage msg)
     {
         try {
             PreparedStatement statement = getStatementForQuery("SELECT name from IRC_ROOMS ORDER BY name;",

@@ -14,7 +14,7 @@ public class LogoutAction extends ActionBase {
     }
 
     @Override
-    public boolean execute(ClientMessage msg)
+    protected boolean executePriv(ClientMessage msg)
     {
 
         String query = "UPDATE IRC_USERS SET token = NULL, curr_room_name = NULL WHERE username = ?";

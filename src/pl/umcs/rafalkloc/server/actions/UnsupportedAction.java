@@ -10,7 +10,7 @@ public class UnsupportedAction extends ActionBase {
     }
 
     @Override
-    public boolean execute(ClientMessage msg)
+    protected boolean executePriv(ClientMessage msg)
     {
         setError("Unsupported action.");
         return true;
