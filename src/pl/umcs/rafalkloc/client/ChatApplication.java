@@ -66,7 +66,7 @@ public class ChatApplication extends Application {
         {
             Menu roomMenu = new Menu("Room");
             roomMenu.setGraphic(new ImageView(
-                    "file:/home/klocrafi/IdeaProjects/IRC Chat JavaEdition/src/pl/umcs/rafalkloc/client/resources/hotel.png"));
+                    "file:/home/klocrafi/IdeaProjects/IRC Chat JavaEdition/graphic/room_icon.png"));
             MenuItem create = new MenuItem("Create new room");
             create.setOnAction(actionEvent -> {
                 TextInputDialog dialog = new TextInputDialog();
