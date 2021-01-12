@@ -1,6 +1,5 @@
 package pl.umcs.rafalkloc.server.core;
 
-import pl.umcs.rafalkloc.common.ClientMessage;
 import pl.umcs.rafalkloc.common.ServerMessage;
 import pl.umcs.rafalkloc.server.actions.ServerLogoutAction;
 
@@ -52,15 +51,11 @@ public class CoreServer {
         }
     }
 
-    public void sendToAllFromList(ClientMessage message, String receivers)
+    public void sendToAllFromList(ServerMessage message, String receivers)
     {
-        ServerMessage serverMessage = new ServerMessage();
-        serverMessage.setActionNumber(message.getActionNumber());
-        serverMessage.addBodyElem("Message", message.getBodyElem("Message"));
-
         for (ConnectedClientHandler client : mConnectedClients) {
             if (receivers.contains(client.getUsername())) {
-                client.send(serverMessage);
+                client.send(message);
             }
         }
     }

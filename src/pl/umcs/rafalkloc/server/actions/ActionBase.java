@@ -52,8 +52,7 @@ public abstract class ActionBase {
     protected boolean validateToken(ClientMessage message) throws SQLException
     {
         String query = "SELECT token FROM IRC_USERS WHERE username = ?";
-        PreparedStatement statement = mDatabaseConnection.getStatement(query);
-        statement.setString(1, message.getBodyElem("Username"));
+        PreparedStatement statement = getStatementForQuery(query, new String[]{message.getBodyElem("Username")});
         ResultSet result = statement.executeQuery();
 
         boolean retVal = result.getString(1).equals(message.getToken());
