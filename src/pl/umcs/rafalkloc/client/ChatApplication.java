@@ -43,8 +43,20 @@ public class ChatApplication extends Application {
 
         mStage = stage;
         mStage.setOnCloseRequest(event -> {
-            Platform.exit();
-            System.exit(0);
+            Dialog<ButtonType> confirmExit = new Dialog();
+            confirmExit.setContentText("You're logged in. Are you sure you want to quit?");
+            confirmExit.setTitle("Exit");
+            confirmExit.getDialogPane().getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+            confirmExit.showAndWait().ifPresent(type -> {
+                if (type.getButtonData().isDefaultButton()) {
+                    Platform.exit();
+                    System.exit(0);
+                } else {
+                    event.consume();
+                }
+            });
+
+
         });
         createGui();
 
