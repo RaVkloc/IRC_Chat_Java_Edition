@@ -12,9 +12,9 @@ import java.util.*;
 
 public class Client implements Runnable {
     private class UserData {
-        String mToken = "";
-        String mUsername = "";
-        String mCurrentRoomName = "";
+        String token = "";
+        String username = "";
+        String currentRoomName = "";
     }
 
     private final Map<Integer, Set<IrcEventHandler>> mReceivers;
@@ -44,7 +44,7 @@ public class Client implements Runnable {
 
     public boolean isLoggedIn()
     {
-        return !mUserData.mUsername.isEmpty() && !mUserData.mToken.isEmpty();
+        return !mUserData.username.isEmpty() && !mUserData.token.isEmpty();
     }
 
     public void addSubscriber(int actionNumber, IrcEventHandler subscriber)
@@ -67,12 +67,21 @@ public class Client implements Runnable {
 
     public void setCurrentRoom(final String currentRoom)
     {
-        mUserData.mCurrentRoomName = currentRoom;
+        mUserData.currentRoomName = currentRoom;
     }
 
     private void sendToServer(ClientMessage message)
     {
         mOutput.println(ClientMessageCH.serializeToString(message));
+    }
+
+    private ClientMessage getDefaultClientMessage()
+    {
+        ClientMessage defaultMessage = new ClientMessage();
+        defaultMessage.setToken(mUserData.token);
+        defaultMessage.addBodyElem("Username", mUserData.username);
+
+        return defaultMessage;
     }
 
     public boolean login(String username, String password)
@@ -83,13 +92,13 @@ public class Client implements Runnable {
         loginMessage.addBodyElem("Password", password);
 
         sendToServer(loginMessage);
-        mUserData.mUsername = username;
+        mUserData.username = username;
 
         String s = mInput.nextLine();
         System.out.println(s);
         ServerMessage response = ServerMessageCH.deserializeFromString(s);
         if (response.getBodyElem("Error").isEmpty()) {
-            mUserData.mToken = response.getBodyElem("Token");
+            mUserData.token = response.getBodyElem("Token");
             return true;
         }
 
@@ -113,41 +122,36 @@ public class Client implements Runnable {
 
     public void listRooms()
     {
-        ClientMessage listRoomMessage = new ClientMessage();
+        ClientMessage listRoomMessage = getDefaultClientMessage();
         listRoomMessage.setActionNumber(7);
-        listRoomMessage.setToken(mUserData.mToken);
 
         sendToServer(listRoomMessage);
     }
 
     public void joinRoom(String roomName)
     {
-        ClientMessage joinRoomMessage = new ClientMessage();
+        ClientMessage joinRoomMessage = getDefaultClientMessage();
         joinRoomMessage.setActionNumber(4);
-        joinRoomMessage.setToken(mUserData.mToken);
-        joinRoomMessage.addBodyElem("Username", mUserData.mUsername);
         joinRoomMessage.addBodyElem("Room", roomName);
 
         sendToServer(joinRoomMessage);
 
-        mUserData.mCurrentRoomName = roomName;
+        mUserData.currentRoomName = roomName;
     }
 
     public void leaveRoom()
     {
-        ClientMessage leaveRoomMessage = new ClientMessage();
+        ClientMessage leaveRoomMessage = getDefaultClientMessage();
         leaveRoomMessage.setActionNumber(5);
-        leaveRoomMessage.setToken(mUserData.mToken);
-        leaveRoomMessage.addBodyElem("Room", mUserData.mCurrentRoomName);
+        leaveRoomMessage.addBodyElem("Room", mUserData.currentRoomName);
 
         sendToServer(leaveRoomMessage);
     }
 
     public void createRoom(String roomName)
     {
-        ClientMessage createRoomMessage = new ClientMessage();
+        ClientMessage createRoomMessage = getDefaultClientMessage();
         createRoomMessage.setActionNumber(6);
-        createRoomMessage.setToken(mUserData.mToken);
         createRoomMessage.addBodyElem("Room", roomName);
 
         sendToServer(createRoomMessage);
@@ -157,11 +161,9 @@ public class Client implements Runnable {
 
     public void sendMessage(String text)
     {
-        ClientMessage sendMessageMessage = new ClientMessage();
+        ClientMessage sendMessageMessage = getDefaultClientMessage();
         sendMessageMessage.setActionNumber(9);
-        sendMessageMessage.setToken(mUserData.mToken);
-        sendMessageMessage.addBodyElem("Room", mUserData.mCurrentRoomName);
-        sendMessageMessage.addBodyElem("Username", mUserData.mUsername);
+        sendMessageMessage.addBodyElem("Room", mUserData.currentRoomName);
         sendMessageMessage.addBodyElem("Message", text);
 
         sendToServer(sendMessageMessage);
