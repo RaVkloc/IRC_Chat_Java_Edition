@@ -94,9 +94,7 @@ public class Client implements Runnable {
         sendToServer(loginMessage);
         mUserData.username = username;
 
-        String s = mInput.nextLine();
-        System.out.println(s);
-        ServerMessage response = ServerMessageCH.deserializeFromString(s);
+        ServerMessage response = ServerMessageCH.deserializeFromString(mInput.nextLine());
         if (response.getBodyElem("Error").isEmpty()) {
             mUserData.token = response.getBodyElem("Token");
             return true;
@@ -114,9 +112,7 @@ public class Client implements Runnable {
 
         sendToServer(registerMessage);
 
-        String s = mInput.nextLine();
-        System.out.println(s);
-        ServerMessage response = ServerMessageCH.deserializeFromString(s);
+        ServerMessage response = ServerMessageCH.deserializeFromString(mInput.nextLine());
         return response.getBodyElem("Error").isEmpty();
     }
 
@@ -126,6 +122,15 @@ public class Client implements Runnable {
         listRoomMessage.setActionNumber(7);
 
         sendToServer(listRoomMessage);
+    }
+
+    public void listUsers(String roomName)
+    {
+        ClientMessage listUsersInRoom = getDefaultClientMessage();
+        listUsersInRoom.setActionNumber(8);
+        listUsersInRoom.addBodyElem("Room", roomName);
+
+        sendToServer(listUsersInRoom);
     }
 
     public void joinRoom(String roomName)
