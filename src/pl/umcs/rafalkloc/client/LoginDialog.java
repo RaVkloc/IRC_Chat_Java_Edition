@@ -4,9 +4,10 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 
 public class LoginDialog extends Dialog<LoginDialog.LoginDialogResult> {
-    public class LoginDialogResult {
+    public static class LoginDialogResult {
         String username;
         String password;
         boolean login;
@@ -43,6 +44,7 @@ public class LoginDialog extends Dialog<LoginDialog.LoginDialogResult> {
             return mResult;
         });
 
+        this.initModality(Modality.APPLICATION_MODAL);
     }
 
     private Tab createLoginTab()
