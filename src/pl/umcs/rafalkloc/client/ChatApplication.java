@@ -80,15 +80,11 @@ public class ChatApplication extends Application {
             roomMenu.setGraphic(new ImageView(
                     "file:/home/klocrafi/IdeaProjects/IRC Chat JavaEdition/graphic/room_icon.png"));
             MenuItem create = new MenuItem("Create new room");
-            create.setOnAction(actionEvent -> {
-                TextInputDialog dialog = new TextInputDialog();
-                dialog.setHeaderText("Create new room");
-                dialog.setContentText("Type name for a new room:");
-                Optional<String> name = dialog.showAndWait();
-                mClient.createRoom(name.orElse(""));
+            create.setOnAction(e -> {
+                mTextDialog.showAndWait().ifPresent(name -> mClient.createRoom(name.trim()));
             });
             MenuItem leave = new MenuItem("Leave room");
-            create.setOnAction(actionEvent -> {
+            leave.setOnAction(actionEvent -> {
                 mClient.leaveRoom();
             });
             MenuItem users = new MenuItem("List users");
