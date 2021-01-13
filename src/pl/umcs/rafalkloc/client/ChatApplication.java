@@ -2,30 +2,31 @@ package pl.umcs.rafalkloc.client;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import pl.umcs.rafalkloc.common.ServerMessage;
 
 import java.util.Optional;
 
 
-public class ChatApplication extends Application {
+public class ChatApplication extends Application implements IrcEventHandler {
     private Stage mStage;
-    private ListView mListView;
+    private TreeViewWithIrcEventHandler mRoomsTree;
+    private ListViewWithIrcEventHandler mMessageList;
+    private TextInputDialog mTextDialog;
     private final Client mClient;
-
-    private Thread mClientThread;
-
 
     public ChatApplication()
     {
         mClient = new Client();
+        mClient.addSubscriber(4, this);
+        mClient.addSubscriber(5, this);
     }
 
     @Override
@@ -43,10 +44,11 @@ public class ChatApplication extends Application {
 
         mStage = stage;
         mStage.setOnCloseRequest(event -> {
-            Dialog<ButtonType> confirmExit = new Dialog();
+            Dialog<ButtonType> confirmExit = new Dialog<>();
             confirmExit.setContentText("You're logged in. Are you sure you want to quit?");
             confirmExit.setTitle("Exit");
             confirmExit.getDialogPane().getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+            confirmExit.initModality(Modality.WINDOW_MODAL);
             confirmExit.showAndWait().ifPresent(type -> {
                 if (type.getButtonData().isDefaultButton()) {
                     Platform.exit();
@@ -80,18 +82,21 @@ public class ChatApplication extends Application {
             roomMenu.setGraphic(new ImageView(
                     "file:/home/klocrafi/IdeaProjects/IRC Chat JavaEdition/graphic/room_icon.png"));
             MenuItem create = new MenuItem("Create new room");
-            create.setOnAction(e -> {
-                mTextDialog.showAndWait().ifPresent(name -> mClient.createRoom(name.trim()));
-            });
-            MenuItem leave = new MenuItem("Leave room");
-            leave.setOnAction(actionEvent -> {
-                mClient.leaveRoom();
-            });
-            MenuItem users = new MenuItem("List users");
-            users.setOnAction(actionEvent -> {
+            create.setOnAction(e -> mTextDialog.showAndWait().ifPresent(name -> mClient.createRoom(name.trim())));
 
+            MenuItem refresh = new MenuItem("Refresh rooms' list");
+            refresh.setOnAction(e -> mClient.listRooms());
+
+            MenuItem leave = new MenuItem("Leave room");
+            leave.setOnAction(e -> mClient.leaveRoom());
+
+            MenuItem users = new MenuItem("List users");
+            users.setOnAction(e -> {
+                if (mRoomsTree.getSelectionModel().getSelectedItem() != null)
+                    mClient.listUsers(mRoomsTree.getSelectionModel().getSelectedItem().getValue());
             });
-            roomMenu.getItems().addAll(create, leave, users);
+
+            roomMenu.getItems().addAll(create, refresh, leave, users);
             menuBar.getMenus().addAll(roomMenu);
         }
 
@@ -99,6 +104,7 @@ public class ChatApplication extends Application {
         {
             Menu sessionMenu = new Menu("Session");
             MenuItem logout = new MenuItem("Logout");
+            sessionMenu.getItems().addAll(logout);
 
             menuBar.getMenus().addAll(sessionMenu);
         }
@@ -107,16 +113,34 @@ public class ChatApplication extends Application {
         // Main widget
         SplitPane splitPane = new SplitPane();
         {
-            VBox leftControl = new VBox(mListView);
-            ListViewWithIrcEventHandler messageList = new ListViewWithIrcEventHandler("Message");
-            mClient.addSubscriber(9, messageList);
+            mRoomsTree = new TreeViewWithIrcEventHandler(mClient);
+            mRoomsTree.setRoot(new TreeItem<>("Rooms"));
+            mClient.addSubscriber(7, mRoomsTree);
+            mClient.addSubscriber(8, mRoomsTree);
+            mRoomsTree.setOnMouseClicked(mouseEvent -> {
+                if (mouseEvent.getClickCount() == 2 && mouseEvent.getButton() == MouseButton.PRIMARY) {
+                    if (mRoomsTree.getSelectionModel().getSelectedItem() == null) {
+                        mouseEvent.consume();
+                        return;
+                    }
+                    String room = mRoomsTree.getSelectionModel().getSelectedItem().getValue();
+                    mClient.joinRoom(room);
+                }
+            });
+            VBox leftControl = new VBox(mRoomsTree);
+            mMessageList = new ListViewWithIrcEventHandler();
+            mClient.addSubscriber(9, mMessageList);
             TextArea messageEdit = new TextArea();
             messageEdit.setPromptText("Type your message here...");
             messageEdit.setPrefRowCount(5);
             Button sendButton = new Button("Send message");
+            sendButton.setGraphic(new ImageView("file:/home/klocrafi/IdeaProjects/IRC Chat JavaEdition/graphic/send.png"));
             sendButton.autosize();
-            sendButton.setOnAction(actionEvent -> mClient.sendMessage(messageEdit.getText()));
-            VBox rightControl = new VBox(messageList, messageEdit, sendButton);
+            sendButton.setOnAction(actionEvent -> {
+                mClient.sendMessage(messageEdit.getText());
+                messageEdit.clear();
+            });
+            VBox rightControl = new VBox(mMessageList, messageEdit, sendButton);
             rightControl.fillWidthProperty().setValue(true);
             rightControl.setAlignment(Pos.CENTER);
             rightControl.setSpacing(15);
@@ -129,20 +153,44 @@ public class ChatApplication extends Application {
 
     private void initWidgets()
     {
-        mListView = new ListViewWithIrcEventHandler("Rooms");
-        mClient.addSubscriber(7, (IrcEventHandler) mListView);
+        mTextDialog = new TextInputDialog();
+        mTextDialog.setHeaderText("Create new room");
+        mTextDialog.setContentText("Type name for a new room:");
+        mTextDialog.initModality(Modality.WINDOW_MODAL);
+    }
 
-        mListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event)
-            {
-                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                    mStage.setTitle("IRC Chat Java Edition @ " + mListView.getSelectionModel().getSelectedItem());
-                    mClient.joinRoom(mListView.getSelectionModel().getSelectedItem().toString());
-                }
-            }
-        });
+    @Override
+    public void handleEvent(ServerMessage message)
+    {
+        if (!message.getBodyElem("Error").isEmpty()) {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setResizable(false);
+                alert.setTitle("Error");
+                alert.setContentText(message.getBodyElem("Error"));
 
+                alert.showAndWait();
+            });
+
+            return;
+        }
+
+        if (message.getActionNumber() == 4) { //join room
+            String currentRoom = message.getBodyElem("Room");
+            mClient.setCurrentRoom(currentRoom);
+            Platform.runLater(() -> {
+                mStage.setTitle("IRC Chat Java Edition @ " + currentRoom);
+                mMessageList.getItems().clear();
+            });
+        }
+
+        if (message.getActionNumber() == 5) { // leave room
+            mClient.setCurrentRoom("");
+            Platform.runLater(() -> {
+                mStage.setTitle("IRC Chat Java Edition");
+                mMessageList.getItems().clear();
+            });
+        }
     }
 
     private void loginOrRegisterClient()
@@ -163,7 +211,7 @@ public class ChatApplication extends Application {
 
         while (true) {
             loginResult = loginDialog.showAndWait();
-            if (!loginResult.isPresent() || loginResult.get().username.isEmpty()) {
+            if (loginResult.isEmpty() || loginResult.get().username.isEmpty()) {
                 return;
             }
             if (loginResult.get().login) {

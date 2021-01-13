@@ -9,12 +9,10 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class ListViewWithIrcEventHandler extends ListView<String> implements IrcEventHandler {
-    private String mMessageElem;
 
-    public ListViewWithIrcEventHandler(String messageElem)
+    public ListViewWithIrcEventHandler()
     {
         super();
-        mMessageElem = messageElem;
     }
 
     @Override
@@ -27,11 +25,7 @@ public class ListViewWithIrcEventHandler extends ListView<String> implements Irc
                 alert.showAndWait();
                 return;
             }
-            if (mMessageElem.equals("Rooms"))
-                this.getItems().clear();
-
-            System.out.println(message.getBodyElem(mMessageElem));
-            this.getItems().addAll(Arrays.stream(message.getBodyElem(mMessageElem).split(";"))
+            this.getItems().addAll(Arrays.stream(message.getBodyElem("Message").split(";"))
                                            .filter(e -> !e.isEmpty())
                                            .collect(Collectors.toList()));
             this.scrollTo(this.getItems().size());
