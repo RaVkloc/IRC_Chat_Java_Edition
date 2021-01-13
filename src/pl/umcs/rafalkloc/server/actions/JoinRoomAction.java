@@ -31,6 +31,7 @@ public class JoinRoomAction extends ActionBase {
                 if (result.getInt(1) == 0) {
                     setError("Required room does not exists.");
                     statement.close();
+                    getResponse().addBodyElem("Room", "");
                     return false;
                 }
                 statement.close();
@@ -47,9 +48,11 @@ public class JoinRoomAction extends ActionBase {
         } catch (SQLException e) {
             e.printStackTrace();
             setError("Some errors occurred while joining to room.");
+            getResponse().addBodyElem("Room", "");
             return false;
         }
 
+        getResponse().addBodyElem("Room", msg.getBodyElem("Room"));
         return true;
     }
 }
