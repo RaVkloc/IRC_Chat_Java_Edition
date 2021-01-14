@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.util.*;
 
 public class Client implements Runnable {
-    private class UserData {
+    private static class UserData {
         String token = "";
         String username = "";
         String currentRoomName = "";
@@ -19,16 +19,15 @@ public class Client implements Runnable {
 
     private final Map<Integer, Set<IrcEventHandler>> mReceivers;
 
-    private Socket mSocket;
     private Scanner mInput;
     private PrintWriter mOutput;
-    private UserData mUserData;
+    private final UserData mUserData;
 
 
     Client()
     {
         try {
-            mSocket = new Socket("localhost", 7698);
+            Socket mSocket = new Socket("localhost", 7698);
             mInput = new Scanner(mSocket.getInputStream());
             mOutput = new PrintWriter(mSocket.getOutputStream(), true);
         } catch (IOException e) {
@@ -37,7 +36,7 @@ public class Client implements Runnable {
 
         mUserData = new UserData();
         mReceivers = new HashMap<>();
-        for (int i = 1; i < 10; i++) {
+        for (int i = 1; i <= 10; i++) {
             mReceivers.put(i, new HashSet<>());
         }
     }
@@ -101,6 +100,14 @@ public class Client implements Runnable {
         }
 
         return false;
+    }
+
+    public void logout()
+    {
+        ClientMessage logoutMessage = getDefaultClientMessage();
+        logoutMessage.setActionNumber(3);
+
+        sendToServer(logoutMessage);
     }
 
     public boolean register(String username, String password)
