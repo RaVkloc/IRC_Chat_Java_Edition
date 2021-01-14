@@ -1,7 +1,6 @@
 package pl.umcs.rafalkloc.server.core;
 
 import pl.umcs.rafalkloc.common.ServerMessage;
-import pl.umcs.rafalkloc.server.actions.ServerLogoutAction;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -62,7 +61,7 @@ public class CoreServer {
 
     public void disconnect(ConnectedClientHandler client)
     {
-        ServerLogoutAction.logout(client.getUsername());
+        ServerLogoutHelper.logout(client.getUsername());
         mConnectedClients.remove(client);
     }
 

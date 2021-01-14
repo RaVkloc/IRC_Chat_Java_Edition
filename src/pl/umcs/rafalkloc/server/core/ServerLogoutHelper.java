@@ -1,11 +1,9 @@
-package pl.umcs.rafalkloc.server.actions;
-
-import pl.umcs.rafalkloc.server.core.DatabaseConnection;
+package pl.umcs.rafalkloc.server.core;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class ServerLogoutAction {
+public class ServerLogoutHelper {
     public static void logout(String username)
     {
         DatabaseConnection db_conn = new DatabaseConnection();
