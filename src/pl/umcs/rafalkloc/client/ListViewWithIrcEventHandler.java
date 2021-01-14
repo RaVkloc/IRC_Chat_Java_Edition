@@ -1,7 +1,6 @@
 package pl.umcs.rafalkloc.client;
 
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import pl.umcs.rafalkloc.common.ServerMessage;
 
@@ -20,9 +19,7 @@ public class ListViewWithIrcEventHandler extends ListView<String> implements Irc
     {
         Platform.runLater(() -> {
             if (!message.getBodyElem("Error").isEmpty()) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText(message.getBodyElem("Error"));
-                alert.showAndWait();
+                DialogHelper.getErrorDialog("", message.getBodyElem("Error")).showAndWait();
                 return;
             }
             this.getItems().addAll(Arrays.stream(message.getBodyElem("Message").split(";"))
