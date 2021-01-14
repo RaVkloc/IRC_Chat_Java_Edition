@@ -1,5 +1,6 @@
 package pl.umcs.rafalkloc.client;
 
+import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import pl.umcs.rafalkloc.common.ServerMessage;
@@ -16,6 +17,12 @@ public class TreeViewWithIrcEventHandler extends TreeView<String> implements Irc
     @Override
     public void handleEvent(ServerMessage message)
     {
+        if (!message.getBodyElem("Error").isEmpty()) {
+            Platform.runLater(() -> DialogHelper.getErrorDialog("",
+                                                                message.getBodyElem("Error")).showAndWait());
+            return;
+        }
+
         if (message.getActionNumber() == 7) { //list rooms
             getRoot().getChildren().clear();
 
