@@ -83,7 +83,6 @@ public class ChatApplication extends Application implements IrcEventHandler {
             MenuItem leave = new MenuItem("Leave room");
             leave.setOnAction(e -> {
                 mClient.leaveRoom();
-                disableMessagingPart(true);
             });
 
             MenuItem users = new MenuItem("List users");
@@ -121,12 +120,12 @@ public class ChatApplication extends Application implements IrcEventHandler {
                     }
                     String room = mRoomsTree.getSelectionModel().getSelectedItem().getValue();
                     mClient.joinRoom(room);
-                    disableMessagingPart(false);
                 }
             });
             VBox leftControl = new VBox(mRoomsTree);
             mMessageList = new ListViewWithIrcEventHandler();
             mClient.addSubscriber(9, mMessageList);
+            mClient.addSubscriber(10, mMessageList);
             TextArea messageEdit = new TextArea();
             messageEdit.setPromptText("Type your message here...");
             messageEdit.setPrefRowCount(5);
@@ -169,14 +168,14 @@ public class ChatApplication extends Application implements IrcEventHandler {
             Platform.runLater(() -> {
                 mStage.setTitle("IRC Chat Java Edition @ " + currentRoom);
                 mMessageList.getItems().clear();
+                disableMessagingPart(false);
             });
-        }
-
-        if (message.getActionNumber() == 5) { // leave room
+        } else if (message.getActionNumber() == 5) { // leave room
             mClient.setCurrentRoom("");
             Platform.runLater(() -> {
                 mStage.setTitle("IRC Chat Java Edition");
                 mMessageList.getItems().clear();
+                disableMessagingPart(true);
             });
         }
     }
