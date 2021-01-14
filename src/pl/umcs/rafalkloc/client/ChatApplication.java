@@ -18,6 +18,7 @@ public class ChatApplication extends Application implements IrcEventHandler {
     private Stage mStage;
     private TreeViewWithIrcEventHandler mRoomsTree;
     private ListViewWithIrcEventHandler mMessageList;
+    private VBox mRightControl;
     private final Client mClient;
 
     public ChatApplication()
@@ -54,6 +55,7 @@ public class ChatApplication extends Application implements IrcEventHandler {
 
 
         createGui();
+        disableMessagingPart(true);
 
         mClient.listRooms();
 
@@ -79,7 +81,10 @@ public class ChatApplication extends Application implements IrcEventHandler {
             refresh.setOnAction(e -> mClient.listRooms());
 
             MenuItem leave = new MenuItem("Leave room");
-            leave.setOnAction(e -> mClient.leaveRoom());
+            leave.setOnAction(e -> {
+                mClient.leaveRoom();
+                disableMessagingPart(true);
+            });
 
             MenuItem users = new MenuItem("List users");
             users.setOnAction(e -> {
@@ -116,6 +121,7 @@ public class ChatApplication extends Application implements IrcEventHandler {
                     }
                     String room = mRoomsTree.getSelectionModel().getSelectedItem().getValue();
                     mClient.joinRoom(room);
+                    disableMessagingPart(false);
                 }
             });
             VBox leftControl = new VBox(mRoomsTree);
@@ -131,15 +137,20 @@ public class ChatApplication extends Application implements IrcEventHandler {
                 mClient.sendMessage(messageEdit.getText());
                 messageEdit.clear();
             });
-            VBox rightControl = new VBox(mMessageList, messageEdit, sendButton);
-            rightControl.fillWidthProperty().setValue(true);
-            rightControl.setAlignment(Pos.CENTER);
-            rightControl.setSpacing(15);
+            mRightControl = new VBox(mMessageList, messageEdit, sendButton);
+            mRightControl.fillWidthProperty().setValue(true);
+            mRightControl.setAlignment(Pos.CENTER);
+            mRightControl.setSpacing(15);
 
-            splitPane.getItems().addAll(leftControl, rightControl);
+            splitPane.getItems().addAll(leftControl, mRightControl);
         }
 
         mStage.setScene(new Scene(new VBox(menuBar, splitPane), 800, 600));
+    }
+
+    private void disableMessagingPart(boolean disabled)
+    {
+        mRightControl.setDisable(disabled);
     }
 
     @Override
