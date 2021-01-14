@@ -48,6 +48,12 @@ public class ConnectedClientHandler implements Runnable {
             }
 
             send(action.getResponse());
+
+            if (action.hasAdditionalMessages()) {
+                for (ServerMessage message : action.getAdditionalMessages()) {
+                    send(message);
+                }
+            }
         }
 
         CoreServer.instance().disconnect(this);

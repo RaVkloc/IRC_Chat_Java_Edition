@@ -7,14 +7,18 @@ import pl.umcs.rafalkloc.server.core.DatabaseConnection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ActionBase {
     private DatabaseConnection mDatabaseConnection;
     private ServerMessage mResponse;
+    protected final ArrayList<ServerMessage> mToSendAfterResponse;
 
     public ActionBase()
     {
         mDatabaseConnection = new DatabaseConnection();
+        mToSendAfterResponse = new ArrayList<>();
     }
 
     public abstract int getActionNumber();
@@ -23,6 +27,7 @@ public abstract class ActionBase {
     {
         mResponse = new ServerMessage();
         mResponse.setActionNumber(getActionNumber());
+        mToSendAfterResponse.clear();
 
         return executePriv(msg);
     }
@@ -32,6 +37,16 @@ public abstract class ActionBase {
     public ServerMessage getResponse()
     {
         return mResponse;
+    }
+
+    public boolean hasAdditionalMessages()
+    {
+        return mToSendAfterResponse.size() != 0;
+    }
+
+    public List<ServerMessage> getAdditionalMessages()
+    {
+        return mToSendAfterResponse;
     }
 
     protected void setError(String error)
@@ -70,6 +85,17 @@ public abstract class ActionBase {
         }
 
         return statement;
+    }
+
+    protected String getUsernameFromToken(ClientMessage message) throws SQLException
+    {
+        String query = "SELECT username FROM IRC_USERS WHERE token = ?";
+        PreparedStatement statement = getStatementForQuery(query, new String[]{message.getToken()});
+        ResultSet result = statement.executeQuery();
+
+        String retVal = result.getString(1);
+        statement.close();
+        return retVal;
     }
 
 }
