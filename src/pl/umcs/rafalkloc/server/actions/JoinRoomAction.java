@@ -53,7 +53,7 @@ public class JoinRoomAction extends ActionBase {
                         "FROM (" +
                         "         SELECT message, from_user, strftime('%d-%m-%Y %H:%M:%S', datetime(sent_timestamp, 'localtime')) as d" +
                         "         FROM IRC_MESSAGES" +
-                        "         WHERE to_room = 'pierwszy'" +
+                        "         WHERE to_room = ?" +
                         "         ORDER BY sent_timestamp DESC" +
                         "         LIMIT 10" +
                         "     )" +
