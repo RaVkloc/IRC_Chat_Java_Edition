@@ -1,10 +1,14 @@
 package pl.umcs.rafalkloc.client;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.TextInputDialog;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import javafx.util.Duration;
+import javafx.util.Pair;
+
+import java.util.Date;
 
 public class DialogHelper {
     public static TextInputDialog getNameDialog()
@@ -40,5 +44,44 @@ public class DialogHelper {
         alert.initModality(Modality.WINDOW_MODAL);
 
         return alert;
+    }
+
+    public static Dialog<Pair<Date, Date>> getTimeRangeDialog()
+    {
+        Dialog<Pair<Date, Date>> timeRangeDialog = new Dialog<>();
+        timeRangeDialog.initModality(Modality.WINDOW_MODAL);
+        timeRangeDialog.setTitle("Choose range");
+        timeRangeDialog.setHeaderText("Choose range to get message.");
+        timeRangeDialog.getDialogPane().getButtonTypes().addAll(ButtonType.APPLY, ButtonType.CANCEL);
+
+        Label fromDateLabel = new Label("From date:");
+        DatePicker fromDate = new DatePicker();
+        fromDate.setShowWeekNumbers(false);
+        Tooltip fromTooltip = new Tooltip();
+        fromTooltip.setShowDelay(Duration.millis(300));
+        fromTooltip.setText("To get messages from specific time, type it after date.");
+        fromDate.setTooltip(fromTooltip);
+        HBox fromBox = new HBox(fromDateLabel, fromDate);
+        fromBox.setSpacing(5);
+        fromBox.setAlignment(Pos.CENTER_RIGHT);
+
+        Label tillDateLabel = new Label("Till date:");
+        DatePicker tillDate = new DatePicker();
+        tillDate.setShowWeekNumbers(false);
+        Tooltip tillTooltip = new Tooltip();
+        tillTooltip.setShowDelay(Duration.millis(500));
+        tillTooltip.setText("To get messages till specific time, type it after date.");
+        tillDate.setTooltip(tillTooltip);
+        HBox tillBox = new HBox(tillDateLabel, tillDate);
+        tillBox.setSpacing(5);
+        tillBox.setAlignment(Pos.CENTER_RIGHT);
+
+        VBox widgets = new VBox(fromBox, tillBox);
+        widgets.setAlignment(Pos.CENTER);
+        widgets.setSpacing(10);
+
+        timeRangeDialog.getDialogPane().setContent(widgets);
+
+        return timeRangeDialog;
     }
 }
