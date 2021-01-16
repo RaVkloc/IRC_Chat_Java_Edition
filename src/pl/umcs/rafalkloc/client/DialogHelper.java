@@ -8,6 +8,8 @@ import javafx.stage.Modality;
 import javafx.util.Duration;
 import javafx.util.Pair;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DialogHelper {
@@ -55,24 +57,24 @@ public class DialogHelper {
         timeRangeDialog.getDialogPane().getButtonTypes().addAll(ButtonType.APPLY, ButtonType.CANCEL);
 
         Label fromDateLabel = new Label("From date:");
-        DatePicker fromDate = new DatePicker();
-        fromDate.setShowWeekNumbers(false);
+        DatePicker fromDateEdit = new DatePicker();
+        fromDateEdit.setShowWeekNumbers(false);
         Tooltip fromTooltip = new Tooltip();
         fromTooltip.setShowDelay(Duration.millis(300));
         fromTooltip.setText("To get messages from specific time, type it after date.");
-        fromDate.setTooltip(fromTooltip);
-        HBox fromBox = new HBox(fromDateLabel, fromDate);
+        fromDateEdit.setTooltip(fromTooltip);
+        HBox fromBox = new HBox(fromDateLabel, fromDateEdit);
         fromBox.setSpacing(5);
         fromBox.setAlignment(Pos.CENTER_RIGHT);
 
         Label tillDateLabel = new Label("Till date:");
-        DatePicker tillDate = new DatePicker();
-        tillDate.setShowWeekNumbers(false);
+        DatePicker tillDateEdit = new DatePicker();
+        tillDateEdit.setShowWeekNumbers(false);
         Tooltip tillTooltip = new Tooltip();
         tillTooltip.setShowDelay(Duration.millis(500));
         tillTooltip.setText("To get messages till specific time, type it after date.");
-        tillDate.setTooltip(tillTooltip);
-        HBox tillBox = new HBox(tillDateLabel, tillDate);
+        tillDateEdit.setTooltip(tillTooltip);
+        HBox tillBox = new HBox(tillDateLabel, tillDateEdit);
         tillBox.setSpacing(5);
         tillBox.setAlignment(Pos.CENTER_RIGHT);
 
@@ -81,7 +83,37 @@ public class DialogHelper {
         widgets.setSpacing(10);
 
         timeRangeDialog.getDialogPane().setContent(widgets);
+        timeRangeDialog.setResultConverter(dialogButton -> {
+            if (dialogButton.getButtonData() != ButtonBar.ButtonData.APPLY) {
+                return null;
+            }
+
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+            String fromTxt = fromDateEdit.getEditor().getText().trim(),
+                    tillTxt = tillDateEdit.getEditor().getText().trim();
+            try {
+                return new Pair<>(formatter.parse(normalizeDateTime(fromTxt, true)),
+                                  formatter.parse(normalizeDateTime(tillTxt, false)));
+            } catch (ParseException e) {
+                return null;
+            }
+        });
 
         return timeRangeDialog;
+    }
+
+    private static String normalizeDateTime(String datetime, boolean isFromDate)
+    {
+        if (datetime.contains(" ")) {
+            if (datetime.split(":").length == 1) { // typed only hour
+                datetime += isFromDate ? ":00:00" : ":59:59";
+            } else if (datetime.split(":").length == 2) { // typed HH:MM
+                datetime += isFromDate ? ":00" : ":59";
+            }
+        } else {
+            datetime += isFromDate ? " 00:00:00" : " 23:59:59";
+        }
+
+        return datetime;
     }
 }
