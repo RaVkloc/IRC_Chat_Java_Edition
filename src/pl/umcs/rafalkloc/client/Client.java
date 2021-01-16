@@ -8,6 +8,7 @@ import pl.umcs.rafalkloc.common.ServerMessageCH;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Client implements Runnable {
@@ -182,6 +183,19 @@ public class Client implements Runnable {
         sendMessageMessage.addBodyElem("Message", text);
 
         sendToServer(sendMessageMessage);
+    }
+
+    public void archiveMessages(final Date from, final Date till)
+    {
+        ClientMessage archive = getDefaultClientMessage();
+        archive.setActionNumber(10);
+        archive.addBodyElem("Room", mUserData.currentRoomName);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        archive.addBodyElem("DateFrom", formatter.format(from));
+        archive.addBodyElem("DateTill", formatter.format(till));
+
+        sendToServer(archive);
     }
 
 }

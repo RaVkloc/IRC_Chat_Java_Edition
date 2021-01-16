@@ -42,16 +42,14 @@ public class ChatApplication extends Application implements IrcEventHandler {
 
 
         mStage = stage;
-        mStage.setOnCloseRequest(event -> {
-            DialogHelper.getConfirmExitDialog().showAndWait().ifPresent(type -> {
-                if (type.getButtonData().isDefaultButton()) {
-                    Platform.exit();
-                    System.exit(0);
-                } else {
-                    event.consume();
-                }
-            });
-        });
+        mStage.setOnCloseRequest(event -> DialogHelper.getConfirmExitDialog().showAndWait().ifPresent(type -> {
+            if (type.getButtonData().isDefaultButton()) {
+                Platform.exit();
+                System.exit(0);
+            } else {
+                event.consume();
+            }
+        }));
 
 
         createGui();
@@ -81,9 +79,7 @@ public class ChatApplication extends Application implements IrcEventHandler {
             refresh.setOnAction(e -> mClient.listRooms());
 
             MenuItem leave = new MenuItem("Leave room");
-            leave.setOnAction(e -> {
-                mClient.leaveRoom();
-            });
+            leave.setOnAction(e -> mClient.leaveRoom());
 
             MenuItem users = new MenuItem("List users");
             users.setOnAction(e -> {
@@ -91,7 +87,12 @@ public class ChatApplication extends Application implements IrcEventHandler {
                     mClient.listUsers(mRoomsTree.getSelectionModel().getSelectedItem().getValue());
             });
 
-            roomMenu.getItems().addAll(create, refresh, leave, users);
+            MenuItem archiveMessages = new MenuItem("Get archive messages");
+            archiveMessages.setOnAction(actionEvent -> DialogHelper.getTimeRangeDialog().showAndWait()
+                    .ifPresent(dateDatePair -> mClient.archiveMessages(dateDatePair.getKey(), dateDatePair.getValue())
+                    ));
+
+            roomMenu.getItems().addAll(create, refresh, leave, users, archiveMessages);
             menuBar.getMenus().addAll(roomMenu);
         }
 
