@@ -63,5 +63,9 @@ public class ActionsProvider {
             SendMessageAction action = new SendMessageAction();
             mActionsMapper.put(action.getActionNumber(), action);   // 9
         }
+        {
+            ReceiveArchiveMessagesAction action = new ReceiveArchiveMessagesAction();
+            mActionsMapper.put(action.getActionNumber(), action);   // 10
+        }
     }
 }
