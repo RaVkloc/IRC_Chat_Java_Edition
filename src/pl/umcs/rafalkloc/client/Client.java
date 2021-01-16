@@ -58,6 +58,7 @@ public class Client implements Runnable {
         while (mInput.hasNext()) {
             response = ServerMessageCH.deserializeFromString(mInput.nextLine());
 
+            assert response != null;
             for (IrcEventHandler receiver : mReceivers.get(response.getActionNumber())) {
                 receiver.handleEvent(response);
             }
@@ -94,6 +95,7 @@ public class Client implements Runnable {
         mUserData.username = username;
 
         ServerMessage response = ServerMessageCH.deserializeFromString(mInput.nextLine());
+        assert response != null;
         if (response.getBodyElem("Error").isEmpty()) {
             mUserData.token = response.getBodyElem("Token");
             return true;
@@ -120,6 +122,7 @@ public class Client implements Runnable {
         sendToServer(registerMessage);
 
         ServerMessage response = ServerMessageCH.deserializeFromString(mInput.nextLine());
+        assert response != null;
         return response.getBodyElem("Error").isEmpty();
     }
 
