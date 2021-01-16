@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import pl.umcs.rafalkloc.client.weather.WeatherWidget;
 import pl.umcs.rafalkloc.common.ServerMessage;
 
 import java.util.Optional;
@@ -123,7 +124,7 @@ public class ChatApplication extends Application implements IrcEventHandler {
                     mClient.joinRoom(room);
                 }
             });
-            VBox leftControl = new VBox(mRoomsTree);
+            VBox leftControl = new VBox(mRoomsTree, new WeatherWidget());
             mMessageList = new ListViewWithIrcEventHandler();
             mClient.addSubscriber(9, mMessageList);
             mClient.addSubscriber(10, mMessageList);
