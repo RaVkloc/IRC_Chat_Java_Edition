@@ -1,5 +1,6 @@
 package pl.umcs.rafalkloc.client;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -8,8 +9,8 @@ import javafx.stage.Modality;
 
 public class LoginDialog extends Dialog<LoginDialog.LoginDialogResult> {
     public static class LoginDialogResult {
-        String username;
-        String password;
+        String username = "";
+        String password = "";
         boolean login;
     }
 
@@ -70,7 +71,9 @@ public class LoginDialog extends Dialog<LoginDialog.LoginDialogResult> {
         VBox layout = new VBox(usernameBox, passwordBox);
         layout.setSpacing(10);
 
-        return new Tab("Login", layout);
+        Tab tab = new Tab("Login", layout);
+        ((VBox) tab.getContent()).setPadding(new Insets(10, 5, 5, 5));
+        return tab;
     }
 
     private Tab createRegisterTab()
@@ -102,6 +105,8 @@ public class LoginDialog extends Dialog<LoginDialog.LoginDialogResult> {
         VBox layout = new VBox(usernameBox, passwordBox);
         layout.setSpacing(10);
 
-        return new Tab("Register", layout);
+        Tab tab = new Tab("Register", layout);
+        ((VBox) tab.getContent()).setPadding(new Insets(10, 5, 5, 5));
+        return tab;
     }
 }
