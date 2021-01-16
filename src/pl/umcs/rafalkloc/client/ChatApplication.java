@@ -97,16 +97,6 @@ public class ChatApplication extends Application implements IrcEventHandler {
             menuBar.getMenus().addAll(roomMenu);
         }
 
-        //Session menu
-        {
-            Menu sessionMenu = new Menu("Session");
-            MenuItem logout = new MenuItem("Logout");
-            sessionMenu.getItems().addAll(logout);
-
-            menuBar.getMenus().addAll(sessionMenu);
-        }
-
-
         // Main widget
         SplitPane splitPane = new SplitPane();
         {
