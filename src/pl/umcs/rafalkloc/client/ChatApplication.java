@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import pl.umcs.rafalkloc.client.weather.WeatherWidget;
 import pl.umcs.rafalkloc.common.ServerMessage;
 
+import java.io.IOException;
 import java.util.Optional;
 
 
@@ -20,11 +21,16 @@ public class ChatApplication extends Application implements IrcEventHandler {
     private TreeViewWithIrcEventHandler mRoomsTree;
     private ListViewWithIrcEventHandler mMessageList;
     private VBox mRightControl;
-    private final Client mClient;
+    private Client mClient;
 
     public ChatApplication()
     {
-        mClient = new Client();
+        try {
+            mClient = new Client();
+        } catch (IOException e) {
+            DialogHelper.getErrorDialog("Connection error", "Unable to connect to server.").showAndWait();
+            System.exit(-1);
+        }
         mClient.addSubscriber(4, this);
         mClient.addSubscriber(5, this);
     }

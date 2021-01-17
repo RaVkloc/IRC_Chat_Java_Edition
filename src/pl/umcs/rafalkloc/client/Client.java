@@ -20,20 +20,17 @@ public class Client implements Runnable {
 
     private final Map<Integer, Set<IrcEventHandler>> mReceivers;
 
-    private Scanner mInput;
-    private PrintWriter mOutput;
+    private final Scanner mInput;
+    private final PrintWriter mOutput;
     private final UserData mUserData;
 
 
-    Client()
+    Client() throws IOException
     {
-        try {
-            Socket mSocket = new Socket("localhost", 7698);
-            mInput = new Scanner(mSocket.getInputStream());
-            mOutput = new PrintWriter(mSocket.getOutputStream(), true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        Socket mSocket = new Socket("localhost", 7698);
+        mInput = new Scanner(mSocket.getInputStream());
+        mOutput = new PrintWriter(mSocket.getOutputStream(), true);
 
         mUserData = new UserData();
         mReceivers = new HashMap<>();
