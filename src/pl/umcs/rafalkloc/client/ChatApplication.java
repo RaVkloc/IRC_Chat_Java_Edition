@@ -137,7 +137,6 @@ public class ChatApplication extends Application implements IrcEventHandler {
                     } else {
                         messageEdit.appendText(System.getProperty("line.separator"));
                     }
-
                 }
             });
             Button sendButton = new Button("Send message");

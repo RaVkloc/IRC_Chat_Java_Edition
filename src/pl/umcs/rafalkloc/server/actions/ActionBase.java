@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ActionBase {
-    private DatabaseConnection mDatabaseConnection;
+    private final DatabaseConnection mDatabaseConnection;
     private ServerMessage mResponse;
     protected final ArrayList<ServerMessage> mToSendAfterResponse;
 

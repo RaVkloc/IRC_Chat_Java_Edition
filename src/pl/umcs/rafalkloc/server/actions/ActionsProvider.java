@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ActionsProvider {
-    private Map<Integer, ActionBase> mActionsMapper;
-    private UnsupportedAction mUnsupportedAction;
+    private final Map<Integer, ActionBase> mActionsMapper;
+    private final UnsupportedAction mUnsupportedAction;
 
     public ActionsProvider()
     {
