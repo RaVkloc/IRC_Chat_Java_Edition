@@ -71,7 +71,7 @@ public class DialogHelper {
         DatePicker tillDateEdit = new DatePicker();
         tillDateEdit.setShowWeekNumbers(false);
         Tooltip tillTooltip = new Tooltip();
-        tillTooltip.setShowDelay(Duration.millis(500));
+        tillTooltip.setShowDelay(Duration.millis(300));
         tillTooltip.setText("To get messages till specific time, type it after date.");
         tillDateEdit.setTooltip(tillTooltip);
         HBox tillBox = new HBox(tillDateLabel, tillDateEdit);

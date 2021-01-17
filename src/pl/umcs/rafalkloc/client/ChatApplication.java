@@ -47,7 +47,6 @@ public class ChatApplication extends Application implements IrcEventHandler {
         // Client starts listening for responses from server
         new Thread(mClient).start();
 
-
         mStage = stage;
         mStage.setOnCloseRequest(event -> DialogHelper.getConfirmExitDialog().showAndWait().ifPresent(type -> {
             if (type.getButtonData().isDefaultButton()) {
@@ -122,6 +121,7 @@ public class ChatApplication extends Application implements IrcEventHandler {
                 }
             });
             VBox leftControl = new VBox(mRoomsTree, new WeatherWidget());
+
             mMessageList = new ListViewWithIrcEventHandler();
             mClient.addSubscriber(9, mMessageList);
             mClient.addSubscriber(10, mMessageList);
@@ -130,7 +130,6 @@ public class ChatApplication extends Application implements IrcEventHandler {
             messageEdit.setPrefRowCount(5);
             Button sendButton = new Button("Send message");
             sendButton.setGraphic(new ImageView("file:/home/klocrafi/IdeaProjects/IRC Chat JavaEdition/graphic/send.png"));
-            sendButton.autosize();
             sendButton.setOnAction(actionEvent -> {
                 mClient.sendMessage(messageEdit.getText());
                 messageEdit.clear();
