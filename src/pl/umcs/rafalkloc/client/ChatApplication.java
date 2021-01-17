@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -128,6 +129,17 @@ public class ChatApplication extends Application implements IrcEventHandler {
             TextArea messageEdit = new TextArea();
             messageEdit.setPromptText("Type your message here...");
             messageEdit.setPrefRowCount(5);
+            messageEdit.setOnKeyPressed(keyEvent -> {
+                if (keyEvent.getCode() == KeyCode.ENTER) {
+                    if (!keyEvent.isShiftDown()) {
+                        mClient.sendMessage(messageEdit.getText());
+                        messageEdit.clear();
+                    } else {
+                        messageEdit.appendText(System.getProperty("line.separator"));
+                    }
+
+                }
+            });
             Button sendButton = new Button("Send message");
             sendButton.setGraphic(new ImageView("file:/home/klocrafi/IdeaProjects/IRC Chat JavaEdition/graphic/send.png"));
             sendButton.setOnAction(actionEvent -> {
