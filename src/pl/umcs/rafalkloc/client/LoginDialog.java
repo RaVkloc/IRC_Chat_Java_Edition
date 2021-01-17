@@ -50,15 +50,6 @@ public class LoginDialog extends Dialog<LoginDialog.LoginDialogResult> {
 
     private Tab createLoginTab()
     {
-        Label usernameLabel = new Label("Username:");
-        TextField usernameEdit = new TextField();
-        usernameLabel.setLabelFor(usernameEdit);
-        usernameEdit.setPromptText("Username...");
-        usernameEdit.textProperty().addListener((observable, oldValue, newValue) -> mResult.username = newValue);
-        HBox usernameBox = new HBox(usernameLabel, usernameEdit);
-        usernameBox.setSpacing(20);
-        usernameBox.setAlignment(Pos.CENTER);
-
         Label passwordLabel = new Label("Password:");
         PasswordField passwordEdit = new PasswordField();
         passwordLabel.setLabelFor(passwordEdit);
@@ -68,7 +59,7 @@ public class LoginDialog extends Dialog<LoginDialog.LoginDialogResult> {
         passwordBox.setSpacing(20);
         passwordBox.setAlignment(Pos.CENTER);
 
-        VBox layout = new VBox(usernameBox, passwordBox);
+        VBox layout = new VBox(getUsernameBox(), passwordBox);
         layout.setSpacing(10);
 
         Tab tab = new Tab("Login", layout);
@@ -78,15 +69,6 @@ public class LoginDialog extends Dialog<LoginDialog.LoginDialogResult> {
 
     private Tab createRegisterTab()
     {
-        Label usernameLabel = new Label("Username:");
-        TextField usernameEdit = new TextField();
-        usernameLabel.setLabelFor(usernameEdit);
-        usernameEdit.setPromptText("Username...");
-        usernameEdit.textProperty().addListener((observable, oldValue, newValue) -> mResult.username = newValue);
-        HBox usernameBox = new HBox(usernameLabel, usernameEdit);
-        usernameBox.setSpacing(20);
-        usernameBox.setAlignment(Pos.CENTER);
-
         Label passwordLabel = new Label("Password:");
         PasswordField passwordEdit = new PasswordField();
         passwordLabel.setLabelFor(passwordEdit);
@@ -102,11 +84,25 @@ public class LoginDialog extends Dialog<LoginDialog.LoginDialogResult> {
         passwordBox.setSpacing(20);
         passwordBox.setAlignment(Pos.CENTER);
 
-        VBox layout = new VBox(usernameBox, passwordBox);
+        VBox layout = new VBox(getUsernameBox(), passwordBox);
         layout.setSpacing(10);
 
         Tab tab = new Tab("Register", layout);
         ((VBox) tab.getContent()).setPadding(new Insets(10, 5, 5, 5));
         return tab;
+    }
+
+    private HBox getUsernameBox()
+    {
+        Label usernameLabel = new Label("Username:");
+        TextField usernameEdit = new TextField();
+        usernameLabel.setLabelFor(usernameEdit);
+        usernameEdit.setPromptText("Username...");
+        usernameEdit.textProperty().addListener((observable, oldValue, newValue) -> mResult.username = newValue);
+        HBox usernameBox = new HBox(usernameLabel, usernameEdit);
+        usernameBox.setSpacing(20);
+        usernameBox.setAlignment(Pos.CENTER);
+
+        return usernameBox;
     }
 }
