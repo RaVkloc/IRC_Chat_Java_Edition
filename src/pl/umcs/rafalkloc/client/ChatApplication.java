@@ -70,6 +70,7 @@ public class ChatApplication extends Application implements IrcEventHandler {
     private void createGui()
     {
         mStage.setTitle("IRC Chat Java Edition");
+        mStage.setResizable(false);
 
         // Menu
         MenuBar menuBar = new MenuBar();
