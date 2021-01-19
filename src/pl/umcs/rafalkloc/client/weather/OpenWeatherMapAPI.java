@@ -1,5 +1,6 @@
 package pl.umcs.rafalkloc.client.weather;
 
+import pl.umcs.rafalkloc.common.FillBeforeRun;
 import top.jfunc.json.JsonObject;
 import top.jfunc.json.impl.JSONObject;
 
@@ -24,8 +25,8 @@ public class OpenWeatherMapAPI {
 
     private static JSONObject getWeather(String town) throws Exception
     {
-        InputStream is = new URL("http://api.openweathermap.org/data/2.5/weather?q=" + town +
-                                         "&appid=0d31a64c42eb4deb7922770f59acd57f&units=metric&lang=pl").openStream();
+        InputStream is = new URL("http://api.openweathermap.org/data/2.5/weather?q=" + town + "&appid=" +
+                                         FillBeforeRun.OPEN_WEATHER_APP_KEY + "&units=metric").openStream();
         JSONObject json;
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));

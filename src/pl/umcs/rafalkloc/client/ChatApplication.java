@@ -11,6 +11,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import pl.umcs.rafalkloc.client.weather.WeatherWidget;
+import pl.umcs.rafalkloc.common.FillBeforeRun;
 import pl.umcs.rafalkloc.common.ServerMessage;
 
 import java.io.IOException;
@@ -78,8 +79,7 @@ public class ChatApplication extends Application implements IrcEventHandler {
         // Room menu
         {
             Menu roomMenu = new Menu("Room");
-            roomMenu.setGraphic(new ImageView(
-                    "file:/home/klocrafi/IdeaProjects/IRC Chat JavaEdition/graphic/room_icon.png"));
+            roomMenu.setGraphic(new ImageView("file:" + FillBeforeRun.GRAPHICS_PATH + "/room_icon.png"));
             MenuItem create = new MenuItem("Create new room");
             create.setOnAction(e -> DialogHelper.getNameDialog().showAndWait().ifPresent(name -> mClient.createRoom(name.trim())));
 
@@ -140,7 +140,7 @@ public class ChatApplication extends Application implements IrcEventHandler {
                 }
             });
             Button sendButton = new Button("Send message");
-            sendButton.setGraphic(new ImageView("file:/home/klocrafi/IdeaProjects/IRC Chat JavaEdition/graphic/send.png"));
+            sendButton.setGraphic(new ImageView("file:" + FillBeforeRun.GRAPHICS_PATH + "/send.png"));
             sendButton.setOnAction(actionEvent -> {
                 mClient.sendMessage(messageEdit.getText());
                 messageEdit.clear();
