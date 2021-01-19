@@ -45,19 +45,19 @@ public class WeatherWidget extends VBox {
         townEdit.setPromptText("Type town...");
         grid.add(townEdit, 1, row++);
 
-        Label temperatureLabel = new Label("Temperature:");
+        Label temperatureLabel = new Label("Temperature [℃]:");
         grid.add(temperatureLabel, 0, row);
         Text temperatureText = new Text();
         temperatureText.setFont(Font.font("JetBrains Mono", FontWeight.BOLD, 18));
         grid.add(temperatureText, 1, row++);
 
-        Label feelsLikeTemperatureLabel = new Label("Feels like temperature:");
+        Label feelsLikeTemperatureLabel = new Label("Feels like temperature [℃]:");
         grid.add(feelsLikeTemperatureLabel, 0, row);
         Text feelsLikeTemperatureText = new Text();
         feelsLikeTemperatureText.setFont(Font.font("JetBrains Mono", FontWeight.BOLD, 18));
         grid.add(feelsLikeTemperatureText, 1, row++);
 
-        Label pressureLabel = new Label("Pressure:");
+        Label pressureLabel = new Label("Pressure [hPa]:");
         grid.add(pressureLabel, 0, row);
         Text pressureText = new Text();
         pressureText.setFont(Font.font("JetBrains Mono", FontWeight.BOLD, 18));
