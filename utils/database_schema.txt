@@ -1,0 +1,41 @@
+create table IRC_ROOMS
+(
+	id INTEGER
+		constraint IRC_ROOMS_pk
+			primary key autoincrement,
+	name TEXT not null
+);
+
+create unique index IRC_ROOMS_name_uindex
+	on IRC_ROOMS (name);
+
+create table IRC_USERS
+(
+	id INTEGER
+		constraint IRC_USERS_pk
+			primary key autoincrement,
+	username TEXT not null,
+	password TEXT not null,
+	curr_room_name TEXT
+		constraint curr_room
+			references IRC_ROOMS (name),
+	token TEXT
+);
+
+create table IRC_MESSAGES
+(
+	id INTEGER not null
+		constraint IRC_MESSAGES_pk
+			primary key autoincrement,
+	from_user TEXT not null
+		constraint table_name_IRC_USERS_username_fk
+			references IRC_USERS (username),
+	to_room TEXT not null
+		constraint table_name_IRC_ROOMS_name_fk
+			references IRC_ROOMS (name),
+	message TEXT default '' not null,
+	sent_timestamp INTEGER not null
+);
+
+create unique index IRC_USERS_username_uindex
+	on IRC_USERS (username);
