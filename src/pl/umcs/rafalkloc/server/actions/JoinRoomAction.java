@@ -2,6 +2,7 @@ package pl.umcs.rafalkloc.server.actions;
 
 import pl.umcs.rafalkloc.common.ClientMessage;
 import pl.umcs.rafalkloc.common.ServerMessage;
+import pl.umcs.rafalkloc.server.core.CoreServer;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -62,15 +63,11 @@ public class JoinRoomAction extends ActionBase {
                 ResultSet result = statement.executeQuery();
 
                 StringBuilder builder = new StringBuilder();
+                String messageTemplate = "[%s]@%s: %s;";
                 while (result.next()) {
-                    builder.append('[');
-                    builder.append(result.getString(3));
-                    builder.append(']');
-                    builder.append(" @");
-                    builder.append(result.getString(2));
-                    builder.append(": ");
-                    builder.append(result.getString(1));
-                    builder.append(';');
+                    builder.append(messageTemplate.formatted(result.getString(3),
+                                                             result.getString(2),
+                                                             result.getString(1)));
                 }
                 statement.close();
 
@@ -79,6 +76,13 @@ public class JoinRoomAction extends ActionBase {
                 message.addBodyElem("Message", builder.toString());
 
                 mToSendAfterResponse.add(message);
+            }
+
+            // Inform other user that someone has joined to room
+            {
+                ListUsersInRoomAction action = new ListUsersInRoomAction();
+                action.execute(msg);
+                informOtherUsersInRoom(action.getResponse(), action.getResponse().getBodyElem("Users"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -89,5 +93,10 @@ public class JoinRoomAction extends ActionBase {
 
         getResponse().addBodyElem("Room", msg.getBodyElem("Room"));
         return true;
+    }
+
+    private void informOtherUsersInRoom(ServerMessage message, String users)
+    {
+        CoreServer.instance().sendToAllFromList(message, users);
     }
 }

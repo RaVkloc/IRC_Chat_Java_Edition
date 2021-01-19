@@ -1,6 +1,8 @@
 package pl.umcs.rafalkloc.server.actions;
 
 import pl.umcs.rafalkloc.common.ClientMessage;
+import pl.umcs.rafalkloc.common.ServerMessage;
+import pl.umcs.rafalkloc.server.core.CoreServer;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -43,11 +45,28 @@ public class LeaveRoomAction extends ActionBase {
                 statement.executeUpdate();
                 statement.close();
             }
+
+            // Inform other user that someone has left room
+            {
+                ListUsersInRoomAction action = new ListUsersInRoomAction();
+                action.execute(msg);
+
+                String currentUser = getUsernameFromToken(msg);
+                String receivers = action.getResponse().getBodyElem("Users");
+                // in case previous has still not been committed into DB
+                action.getResponse().addBodyElem("Users", receivers.replace(currentUser + ";", ""));
+                informOtherUsersInRoom(action.getResponse(), receivers);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             setError("Some errors occurred while joining to room.");
             return false;
         }
         return true;
+    }
+
+    private void informOtherUsersInRoom(ServerMessage message, String users)
+    {
+        CoreServer.instance().sendToAllFromList(message, users);
     }
 }
